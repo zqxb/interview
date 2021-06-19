@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .container {
+            height: 1000px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container"></div>
+    <script>
+
+        function Person(age) {
+            this.age = age
+        }
+        Person.prototype.name = 'kavin'
+        var person1 = new Person()
+        console.log(person1.__proto__)
+        console.log(Person.prototype.__proto__)
+        console.log(Person.prototype.constructor)
+      
+
+
+
+        // 组合继承
+
+        // function Person1(name) {
+        //     this.name = name
+        //     this.setName = function () {
+        //         console.log('object', name)
+        //     }
+        // }
+        // Person1.prototype.age = 100
+        // function Son(name) {
+        //     this.name = name
+        //     Person1.call(this, name)
+
+        // }
+        // Son.prototype = new Person1();
+
+        // var b = new Son("Nick");
+        // b.setName();
+        // console.log(b.age)
+
+        // 寄生式继承 
+
+        // function object(o) {
+        //     function F() { };
+        //     F.prototype = o;
+        //     return new F();
+        // }
+        // function createAnother(original) {
+        //     var clone = object(original);//object()函数创建对象
+        //     clone.sayHi = function () {    //增强这个对象
+        //         console.log('hi')
+        //     };
+        //     return clone;                //返回这个对象
+        // }
+        // var person = {
+        //     name: "Nicholas",
+        //     friends: ["Shelby", "Court", "Van"],
+        // }     //基础对象
+        // var anotherPerson = createAnother(person);  //新对象
+        // anotherPerson.sayHi();   //"hi"
+        // console.log(anotherPerson)
+
+        //anotherPerson原型对象(anotherPerson.__proto__)是person的一个副本，所以anotherPerson.__proto__上有person的所有属性和方法
+        //同时anotherPerson还有了自身的属性和方法  如 sayHi()
+
+        // 寄生组合继承  借用构造函数来继承属性, 在原型上添加共用的方法, 通过寄生式实现继承
+        // function object(o) {
+        //     function F() { };
+        //     F.prototype = o;
+        //     return new F();
+        // }
+        // function inheritPrototype(subType, superType) {
+        //     var prototype = object(superType.prototype);  //创建对象 父类原型的一个副本
+        //     prototype.constructor = subType;              //增强对象  弥补因重写原型而失去的默认的constructor 属性
+        //     subType.prototype = prototype;                //指定对象  将新创建的对象赋值给子类的原型
+        //     return prototype
+        // }
+        // function SuperType(name) {
+        //     this.name = name;
+        //     this.colors = ["red", "blue", "green"];
+        // }
+        // SuperType.prototype.sayName = function () {
+        //     console.log(this.name)
+        // }
+        // function SubType(name, age) {
+        //     //继承属性 
+        //     SuperType.call(this, name);   //只调用一次SuperTyper()
+        //     this.age = age;
+        // }
+        // //继承方法
+        // inheritPrototype(SubType, SuperType);
+        // SubType.prototype.sayAge = function () {
+        //     alert(this.age);
+        // }
+
+        // var instance1 = new SubType("heyushuo");
+        // instance1.sayName();
+
+
+        // class Student {
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+
+        //     hello() {
+        //         alert('Hello, ' + this.name + '!');
+        //     }
+        // }
+        // class PrimaryStudent extends Student {
+        //     constructor(name, grade) {
+        //         super(name); // 记得用super调用父类的构造方法!
+        //         this.grade = grade;
+        //     }
+
+        //     myGrade() {
+        //         alert('I am at grade ' + this.grade);
+        //     }
+        // }
+
+        // var b = new PrimaryStudent('xxx')
+        // console.log('----',b.hello())
+
+
+        // event loop概念：  js 在执行中会产生执行环境，这些执行环境会被添加到执行栈中， 如果遇到异步的代码，会被挂起并加入Task （多种任务） 队列中，一旦执行栈为空
+        // event loop 就会从任务队列中拿出需要执行的代码并放入执行栈中执行。
+
+
+
+        //  浏览器 event loop 执行顺序
+        //  执行同步代码，这属于宏任务
+        //  执行栈为空，查询是否有微任务需要执行
+        //  执行所有微任务
+        //  必要的话渲染 UI
+        //  然后开始下一轮 Event loop，执行宏任务中的异步代码
+
+
+
+        // node 
+        // timer
+        // timers 阶段会执行 setTimeout 和 setInterval
+
+        // 一个 timer 指定的时间并不是准确时间，而是在达到这个时间后尽快执行回调，可能会因为系统正在执行别的事务而延迟。
+
+        //  下限的时间有一个范围：[1, 2147483647] ，如果设定的时间不在这个范围，将被设置为1。
+
+        //  I/O
+        // I/O 阶段会执行除了 close 事件，定时器和 setImmediate 的回调
+
+        // idle, prepare
+        //  idle, prepare 阶段内部实现
+
+        //  poll
+        // poll 阶段很重要，这一阶段中，系统会做两件事情
+
+        // 1、执行到点的定时器
+        // 2、执行 poll 队列中的事件
+        // 并且当 poll 中没有定时器的情况下，会发现以下两件事情
+
+        // 如果 poll 队列不为空，会遍历回调队列并同步执行，直到队列为空或者系统限制
+        // 如果 poll 队列为空，会有两件事发生
+        // 如果有 setImmediate 需要执行，poll 阶段会停止并且进入到 check 阶段执行 setImmediate
+        // 如果没有 setImmediate 需要执行，会等待回调被加入到队列中并立即执行回调
+        // 如果有别的定时器需要被执行，会回到 timer 阶段执行回调。
+
+        //  check
+        //  check 阶段执行 setImmediate
+
+        //  close callbacks
+        //    close callbacks 阶段执行 close 事件
+
+
+
+        // var a = 0;
+        // if (true) {
+        //     a = 1
+        //     function a() { }
+
+        //     a = 21
+        //     console.log('里面', a)
+        // }
+
+        // console.log('外部啊', a)
+
+        // 设计模式
+
+        //工厂模式 ，不暴露创建对象的具体逻辑，而是将将逻辑封装在一个函数中，那么这个函数就可以被视为一个工厂 
+
+        // let UserFactory = function (role) {
+
+        //     function User(opt) {
+        //         this.name = opt.name
+        //     }
+        //     switch (role) {
+        //         case ('superAdmin'):
+        //             return new User('superAdmin');
+        //             break;
+        //         case ('admin'):
+        //             return new User('admin')
+        //             break;
+        //         case ('user'):
+        //             return new User('user')
+
+        //         default:
+        //             throw new Error('参数错误')
+        //     }
+        // }
+
+
+        // let superAdmin = UserFactory('superAdmin');
+        // let admin = UserFactory('admin')
+        // let normalUser = UserFactory('user')
+        // 单列模式   
+
+        // let singleCase = function (name) {
+        //     this.name = name;
+
+        // }
+
+        // singleCase.prototype.getName = function () {
+        //     return this.name
+        // }
+
+        // let getInstance = (function () {
+        //     var instance = null;
+        //     return function (name) {
+        //         if (!instance) {//相当于一个一次性阀门,只能实例化一次
+        //             instance = new singleCase(name);
+        //         }
+        //         return instance;
+        //     }
+        // })()
+
+        // let one = getInstance("one");
+        // let two = getInstance("two");
+        // console.log('one',one)
+
+        // 原型模式 设置函数的原型属性
+        // function Animal(name) {
+        //     this.name = name || 'xxx'
+        //     this.sleep = function () {
+        //         console.log(this.name + '吃饭')
+        //     }
+        // }
+
+
+        // Animal.prototype.eat = function (food) {
+        //     console.log(this.name + '正在吃：' + food);
+        // };
+
+        // function Cat() {
+        // }
+        // Cat.prototype = new Animal();
+        // Cat.prototype.name = 'cat';
+
+        // var cat = new Cat();
+        // console.log(cat.name);//cat
+        // console.log(cat.eat('fish'));//cat正在吃：fish  undefined
+        // console.log(cat.sleep());//cat正在睡觉！ undefined
+
+
+        // 策略模式  目的就是将算法的使用与算法的实现分离开来，避免多重判断条件，更具有扩展性。
+
+        // 对于vip客户 
+        // function vipPrice() {
+        //     this.discount = 0.5;
+        // }
+
+        // vipPrice.prototype.getPrice = function (price) {
+        //     return price * this.discount;
+        // }
+        // // 对于老客户 
+        // function oldPrice() {
+        //     this.discount = 0.3;
+        // }
+
+        // oldPrice.prototype.getPrice = function (price) {
+        //     return price * this.discount;
+        // }
+        // // 对于普通客户 
+        // function Price() {
+        //     this.discount = 1;
+        // }
+
+        // Price.prototype.getPrice = function (price) {
+        //     return price;
+        // }
+
+
+        // function Context() {
+        //     this.name = '';
+        //     this.strategy = null;
+        //     this.price = 0;
+        // }
+
+        // Context.prototype.set = function (name, strategy, price) {
+        //     this.name = name;
+        //     this.strategy = strategy;
+        //     this.price = price;
+        // }
+        // Context.prototype.getResult = function () {
+        //     console.log(this.name + ' 的结账价为: ' + this.strategy.getPrice(this.price));
+        // }
+        // var context = new Context();
+        // var vip = new vipPrice();
+        // context.set('vip客户', vip, 200);
+        // context.getResult(); // vip客户 的结账价为: 100 
+
+
+
+
+
+        // var old = new oldPrice();
+        // context.set('老客户', old, 200);
+        // context.getResult(); // 老客户 的结账价为: 60 
+        // var Price = new Price();
+        // context.set('普通客户', Price, 200);
+        // context.getResult(); // 普通客户 的结账价为: 200 
+
+
+
+
+        // function fn() {
+        //     console.log(this)
+        // }
+
+        // var obj = {
+        //     name: 'xxxx',
+        //     fn:fn
+
+        // }
+        // obj.fn()
+        // console.log(fn())
+
+
+        // try {
+        //     console.log(1);
+        //     setTimeout(() => {
+        //         console.log(2)
+        //     }, 100);
+        //     setTimeout(() => {
+        //         console.log(3);
+        //         throw new Error(5)
+
+        //     })
+        //     console.log(4)
+        // } catch (e) {
+        //     console.log('e', e)
+        // }
+
+
+
+
+        // var a = { a: 2 }
+        // var b = { b: 2 }
+        // console.log(a == b)
+        // console.log(a > b)
+        // console.log(a < b)
+        // console.log(a >= b)
+        // console.log(a <= b)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // typeof 1 
+        // typeof '1' 
+        // typeof undefined 
+        // typeof true 
+
+        // typeof [] 
+        // typeof {} 
+        // typeof console.log 
+
+        // typeof typeof 1
+        // typeof(typeof(1))
+
+
+        // console.log( typeof Object.prototype)
+        // console.log( typeof null)
+
+        // console.log(typeof Array.prototype)
+        // console.log(typeof Function.prototype)
+
+        // Array.isArray(Array.prototype)
+        // var c = []
+        // a = {
+        //     name: 11
+        // }
+        // b = {
+        //     name: 222
+        // }
+        // c[a] = 0
+        // c[b] = 9
+        // console.log('c', c[a], c[b])
+        // console.log([] == 0)  // false   
+        // console.log([] == ![]) // false  yan: true
+        // console.log([] == [])  // false
+        // console.log([] == false) // false
+        // console.log(undefined == undefined) // true
+
+
+
+
+        // 防抖  在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时，重新出发定时器。
+
+        // setTimeout(function () {
+        //     console.log('定时器开始啦')
+        // });
+
+
+        // new Promise((resolve) => {
+        //     console.log('Promise')
+        //     resolve()
+        // }).then(function () {
+        //     console.log('promise1');
+        // }).then(function () {
+        //     console.log('promise2');
+        // });
+
+        // console.log('代码执行结束');
+
+
+
+
+        // 这段代码作为宏任务，进入主线程。
+        // 先遇到setTimeout，那么将其回调函数注册后分发到宏任务Event Queue。(注册过程与上同，下文不再描述)
+        // 接下来遇到了Promise，new Promise立即执行，then函数分发到微任务Event Queue。
+        // 遇到console.log() ，立即执行。
+        // 好啦，整体代码script作为第一个宏任务执行结束，看看有哪些微任务？我们发现了then在微任务Event Queue里面，执行。
+        // ok，第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务Event Queue开始。我们发现了宏任务Event Queue中setTimeout对应的回调函数，立即执行。
+        // 结束。
+
+
+
+
+        // 
+        // function F1(arg) {
+        //     console.log('F1', arg)
+        //     return arg
+        // }
+        // function F2(arg) {
+        //     console.log('F3', arg)
+        //     return arg
+        // }
+        // function F3(arg) {
+        //     console.log('F3', arg)
+        //     return arg
+        // }
+
+
+        // function compose(...fn) {
+        //     return fn.reduce((a, b) => (...arg) => a(b(...arg)))
+        // }
+        // let dispath = compose(F1, F2, F3)
+        // console.log('dispath',dispath('ssss'))
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
